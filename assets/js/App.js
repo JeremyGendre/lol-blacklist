@@ -1,20 +1,42 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import {Button, Container, Form, Grid, Icon, Input, TextArea} from "semantic-ui-react";
+import {Button, Container, Form, Grid, Icon, Input, Popup, TextArea} from "semantic-ui-react";
 import 'semantic-ui-css/semantic.min.css';
 import '../css/app.css';
+import BlacklistedPlayersList from "./Component/BlacklistedPlayersList";
 
+const dummyPlayers = [
+    {
+        name: 'sardoche',
+        reasons: [
+            'intentionnal feeding',
+            'Toxic',
+        ],
+        createdAt: Date.now()
+    },
+    {
+        name:'narkus',
+        reasons: [
+            'Toxic'
+        ],
+        createdAt: Date.now()
+    },
+];
 
 function App() {
     const [simpleValue, setSimpleValue] = useState('');
     const [largeValue, setLargeValue] = useState('');
+    const [simpleSubmit, setSimpleSubmit] = useState(false);
+    const [largeSubmit, setLargeSubmit] = useState(false);
 
     function handleSimpleSearchSubmit(){
+        setSimpleSubmit(true);
         console.log('simple search');
     }
 
     function handleLargeSearchSubmit(){
+        setLargeSubmit(true);
         console.log('large search');
     }
 
@@ -28,6 +50,7 @@ function App() {
                                    icon='search'
                                    required
                                    size="large"
+                                   loading={simpleSubmit}
                                    defaultValue={simpleValue}
                                    onChange={(e) => setSimpleValue(e.currentTarget.value)}
                                    style={{padding:'1em',borderBottom:'solid 1px lightgrey'}}
@@ -40,6 +63,7 @@ function App() {
                                    icon='search'
                                    required
                                    size="large"
+                                   loading={largeSubmit}
                                    defaultValue={largeValue}
                                    onChange={(e) => setLargeValue(e.currentTarget.value)}
                                    style={{padding:'1em',borderBottom:'solid 1px lightgrey'}}
@@ -47,13 +71,22 @@ function App() {
                         </Form>
                     </Grid.Column>
                 </Grid.Row>
-                <Grid.Row>
-                    <Button basic inverted color="olive" animated>
-                        <Button.Content visible>Add</Button.Content>
-                        <Button.Content hidden>
-                            <Icon name='add'/>
-                        </Button.Content>
-                    </Button>
+                <Grid.Row verticalAlign='middle' columns={2}>
+                    <Grid.Column id="player-total">
+                        Total : X players registered
+                    </Grid.Column>
+                    <Grid.Column>
+                        <Popup
+                            trigger={<Button size="huge" circular basic color="orange" icon='add user'/>}
+                            content='Add a user to the blacklist'
+                            position='top right'
+                        />
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row centered>
+                    <Grid.Column>
+                        <BlacklistedPlayersList playersList={dummyPlayers}/>
+                    </Grid.Column>
                 </Grid.Row>
             </Grid>
         </Container>

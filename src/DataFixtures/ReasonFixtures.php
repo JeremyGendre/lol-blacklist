@@ -12,10 +12,10 @@ class ReasonFixtures extends Fixture
     {
         $reasonNames = [
             "Other",
+            "Toxic",
             "Intentionnal feeding",
             "AFK",
             "Bad player",
-            "Toxic"
         ];
 
         foreach ($reasonNames as $reasonName){

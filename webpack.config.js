@@ -12,7 +12,7 @@ Encore
     // public path used by the web server to access the output path
     .setPublicPath('/build')
 
-    .addEntry('app', ['./assets/js/index.js','./assets/css/app.css'])
+    .addEntry('app', ['./assets/js/App.js','./assets/css/app.css'])
 
     .splitEntryChunks()
 

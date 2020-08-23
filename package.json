@@ -16,5 +16,10 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
+    },
+    "dependencies": {
+        "axios": "^0.20.0",
+        "semantic-ui-css": "^2.4.1",
+        "semantic-ui-react": "^1.2.1"
     }
 }

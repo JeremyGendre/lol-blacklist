@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import {Button, Container, Form, Grid, Icon, Input, Popup, TextArea} from "semantic-ui-react";
+import {Button, Container, Dropdown, Form, Grid, Input, Message, Modal, Popup} from "semantic-ui-react";
 import 'semantic-ui-css/semantic.min.css';
 import '../css/app.css';
 import BlacklistedPlayersList from "./Component/BlacklistedPlayersList";
@@ -24,11 +24,24 @@ const dummyPlayers = [
     },
 ];
 
+const dummyReasons = [
+    { key:0, value:0, text: 'Other'},
+    { key:1, value:1, text: 'Feed'},
+    { key:2, value:2, text: 'Toxic'},
+    { key:3, value:3, text: 'afk'},
+];
+
 function App() {
     const [simpleValue, setSimpleValue] = useState('');
     const [largeValue, setLargeValue] = useState('');
     const [simpleSubmit, setSimpleSubmit] = useState(false);
     const [largeSubmit, setLargeSubmit] = useState(false);
+    const [isModalOpen,setIsModalOpen] = useState(false);
+
+    const [newPlayerName,setNewPlayerName] = useState('');
+    const [newPlayerReasons,setNewPlayerReasons] = useState([]);
+    const [newPlayerFormError,setNewPlayerFormError] = useState('');
+    const [newPlayerFormSubmitting,setNewPlayerFormSubmitting] = useState(false);
 
     function handleSimpleSearchSubmit(){
         setSimpleSubmit(true);
@@ -38,6 +51,29 @@ function App() {
     function handleLargeSearchSubmit(){
         setLargeSubmit(true);
         console.log('large search');
+    }
+
+    function handleNewPlayerForm(){
+        setNewPlayerFormError('');
+        let formElement = document.getElementById('new-player-form');
+        if(formElement.reportValidity() !== false && checkNewPlayerValues() === true){
+            setNewPlayerFormSubmitting(true);
+        }else if(newPlayerReasons.length === 0){
+            setNewPlayerFormError('All fields need to be filled');
+        }
+    }
+
+    function checkNewPlayerValues(){
+        return (newPlayerName !== undefined && newPlayerName !== ''
+            && newPlayerReasons !== undefined && newPlayerReasons.length > 0)
+    }
+
+    function clearModal(){
+        setIsModalOpen(false);
+        setNewPlayerFormError('');
+        setNewPlayerName('');
+        setNewPlayerReasons([]);
+        setNewPlayerFormSubmitting(false);
     }
 
     return (
@@ -77,10 +113,51 @@ function App() {
                     </Grid.Column>
                     <Grid.Column>
                         <Popup
-                            trigger={<Button size="huge" circular basic color="orange" icon='add user'/>}
+                            trigger={<Button onClick={() => setIsModalOpen(true)} size="huge" circular basic color="orange" icon='add user'/>}
                             content='Add a user to the blacklist'
                             position='top right'
                         />
+                        <Modal
+                            centered
+                            size='mini'
+                            open={isModalOpen}
+                            onClose={clearModal}
+                            onOpen={() => setIsModalOpen(true)}
+                            style={{color:'rgba(0,0,0,.85)'}}
+                        >
+                            <Modal.Header>Add to blacklist</Modal.Header>
+                            <Modal.Content>
+                                <Modal.Description>
+                                    {newPlayerFormError !== '' ? (
+                                        <Message negative>
+                                            {newPlayerFormError}
+                                        </Message>
+                                    ) : (<></>)}
+                                    <Form id="new-player-form" onSubmit={(e) => { e.preventDefault();handleNewPlayerForm();}}>
+                                        <Form.Group>
+                                            <Form.Field className="full-width">
+                                                <label>Player name</label>
+                                                <Input className="full-width" minLength="3" required onChange={(e,{value})=>setNewPlayerName(value)} placeholder="Name ..." />
+                                            </Form.Field>
+                                        </Form.Group>
+                                        <Form.Group>
+                                            <Form.Field className="full-width">
+                                                <label>Reason of the blacklist</label>
+                                                <Dropdown
+                                                    className="full-width"
+                                                    placeholder='Select one or many reasons'
+                                                    onChange={(e, {value})=>setNewPlayerReasons(value)}
+                                                    multiple selection search required options={dummyReasons} />
+                                            </Form.Field>
+                                        </Form.Group>
+                                    </Form>
+                                </Modal.Description>
+                            </Modal.Content>
+                            <Modal.Actions>
+                                <Button onClick={clearModal}>Cancel</Button>
+                                <Button positive loading={newPlayerFormSubmitting} onClick={handleNewPlayerForm}>Submit</Button>
+                            </Modal.Actions>
+                        </Modal>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row centered>

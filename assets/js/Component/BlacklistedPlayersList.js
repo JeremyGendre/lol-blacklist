@@ -36,16 +36,13 @@ export default function BlacklistedPlayersList(props) {
         </>
     );
 
-    return (
-        <Table selectable striped>
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell>Name</Table.HeaderCell>
-                    <Table.HeaderCell>Reasons</Table.HeaderCell>
-                    <Table.HeaderCell>Created at</Table.HeaderCell>
-                    <Table.HeaderCell/>
-                </Table.Row>
-            </Table.Header>
+    let list = (
+        <Table.Body>
+            <Table.Cell colSpan='4'>No Result</Table.Cell>
+        </Table.Body>
+    );
+    if(playersList.length > 0){
+        list = (
             <Table.Body>
                 {playersList.map((player, index) => {
                     return (
@@ -58,6 +55,20 @@ export default function BlacklistedPlayersList(props) {
                     );
                 })}
             </Table.Body>
+        );
+    }
+
+    return (
+        <Table selectable striped>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Reasons</Table.HeaderCell>
+                    <Table.HeaderCell>Created at</Table.HeaderCell>
+                    <Table.HeaderCell/>
+                </Table.Row>
+            </Table.Header>
+            {list}
         </Table>
     );
 }

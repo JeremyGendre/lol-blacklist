@@ -21,6 +21,10 @@ body {
     text-align: center !important;
 }
 
+.full-width{
+    width:100%;
+}
+
 .ui.form input[type="text"]:focus{
     color:inherit !important;
 }

@@ -9,7 +9,7 @@ export default function BlacklistedPlayersList(props) {
     const actions = (
         <>
             <Popup
-                trigger={<Icon onClick={() => setIsModalOpen(true)} className='icon-delete' size="large" name="delete"/>}
+                trigger={<Icon onClick={() => setIsModalOpen(true)} className='icon-delete' name="trash"/>}
                 content='Remove this player from the blacklist'
                 inverted
                 position='left center'
@@ -59,7 +59,7 @@ export default function BlacklistedPlayersList(props) {
     }
 
     return (
-        <Table selectable striped>
+        <Table selectable style={{borderTop:'solid orange'}} inverted>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>

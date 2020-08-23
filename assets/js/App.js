@@ -22,6 +22,20 @@ const dummyPlayers = [
         ],
         createdAt: Date.now()
     },
+    {
+        name:'narkus',
+        reasons: [
+            'Toxic'
+        ],
+        createdAt: Date.now()
+    },
+    {
+        name:'narkus',
+        reasons: [
+            'Toxic'
+        ],
+        createdAt: Date.now()
+    },
 ];
 
 const dummyReasons = [
@@ -109,7 +123,7 @@ function App() {
                 </Grid.Row>
                 <Grid.Row verticalAlign='middle' columns={2}>
                     <Grid.Column id="player-total">
-                        Total : X players registered
+                        {dummyPlayers.length} players registered
                     </Grid.Column>
                     <Grid.Column>
                         <Popup

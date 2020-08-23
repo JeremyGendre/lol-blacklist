@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\BlacklistedPlayerRepository;
+use App\Service\Serializer\MySerializerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=BlacklistedPlayerRepository::class)
  */
-class BlacklistedPlayer
+class BlacklistedPlayer implements MySerializerInterface
 {
     /**
      * @ORM\Id()
@@ -117,5 +118,30 @@ class BlacklistedPlayer
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString():string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize(): array
+    {
+        $reasons = [];
+        foreach ($this->getReasons() as $reason){
+            $reasons[] = $reason->getLabel();
+        }
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'reasons' => $reasons,
+            'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i'),
+        ];
     }
 }

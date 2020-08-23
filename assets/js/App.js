@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import {Button, Container, Dropdown, Form, Grid, Input, Message, Modal, Popup} from "semantic-ui-react";
@@ -8,32 +8,21 @@ import BlacklistedPlayersList from "./Component/BlacklistedPlayersList";
 
 const dummyPlayers = [
     {
+        id: 1,
         name: 'sardoche',
-        reasons: [
-            'intentionnal feeding',
-            'Toxic',
-        ],
+        reasons: ['intentionnal feeding', 'Toxic',],
         createdAt: Date.now()
     },
     {
+        id: 2,
         name:'narkus',
-        reasons: [
-            'Toxic'
-        ],
+        reasons: ['Toxic'],
         createdAt: Date.now()
     },
     {
-        name:'narkus',
-        reasons: [
-            'Toxic'
-        ],
-        createdAt: Date.now()
-    },
-    {
-        name:'narkus',
-        reasons: [
-            'Toxic'
-        ],
+        id: 3,
+        name:'tyler1',
+        reasons: ['Toxic'],
         createdAt: Date.now()
     },
 ];
@@ -51,6 +40,7 @@ function App() {
     const [simpleSubmit, setSimpleSubmit] = useState(false);
     const [largeSubmit, setLargeSubmit] = useState(false);
     const [isModalOpen,setIsModalOpen] = useState(false);
+    const [blacklistedPlayers,setblacklistedPlayers] = useState([]);
 
     const [newPlayerName,setNewPlayerName] = useState('');
     const [newPlayerReasons,setNewPlayerReasons] = useState([]);
@@ -90,6 +80,13 @@ function App() {
         setNewPlayerFormSubmitting(false);
     }
 
+    useEffect(()=>{
+        axios.get('/api/player/all').then(data => {
+            setblacklistedPlayers(data.data);
+        });
+        //TODO : get all reasons
+    },[]);
+
     return (
         <Container className="app-container">
             <Grid>
@@ -123,7 +120,7 @@ function App() {
                 </Grid.Row>
                 <Grid.Row verticalAlign='middle' columns={2}>
                     <Grid.Column id="player-total">
-                        {dummyPlayers.length} players registered
+                        {blacklistedPlayers.length} players registered
                     </Grid.Column>
                     <Grid.Column>
                         <Popup
@@ -176,7 +173,7 @@ function App() {
                 </Grid.Row>
                 <Grid.Row centered>
                     <Grid.Column>
-                        <BlacklistedPlayersList playersList={dummyPlayers}/>
+                        <BlacklistedPlayersList playersList={blacklistedPlayers}/>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

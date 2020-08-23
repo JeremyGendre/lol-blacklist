@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ReasonRepository;
+use App\Service\Serializer\MySerializerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=ReasonRepository::class)
  */
-class Reason
+class Reason implements MySerializerInterface
 {
     /**
      * @ORM\Id()
@@ -95,5 +96,36 @@ class Reason
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString():string
+    {
+        return $this->label;
+    }
+
+    /**
+     * @return array
+     */
+    public function serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'label' => $this->label
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function serialisedAssociatedPlayers(): array
+    {
+        $result = [];
+        foreach ($this->getBlacklistedPlayers() as $player){
+            $result[] = $player->serialize();
+        }
+        return $result;
     }
 }

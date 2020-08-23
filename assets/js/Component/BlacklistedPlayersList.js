@@ -38,7 +38,9 @@ export default function BlacklistedPlayersList(props) {
 
     let list = (
         <Table.Body>
-            <Table.Cell colSpan='4'>No Result</Table.Cell>
+            <Table.Row>
+                <Table.Cell colSpan='5' className="text-center">No Result</Table.Cell>
+            </Table.Row>
         </Table.Body>
     );
     if(playersList.length > 0){
@@ -47,6 +49,7 @@ export default function BlacklistedPlayersList(props) {
                 {playersList.map((player, index) => {
                     return (
                         <Table.Row key={index}>
+                            <Table.Cell>{player.id}</Table.Cell>
                             <Table.Cell>{player.name}</Table.Cell>
                             <Table.Cell>{player.reasons.map((reason,index)=><div key={index}>{reason}</div>)}</Table.Cell>
                             <Table.Cell>{player.createdAt}</Table.Cell>
@@ -62,6 +65,7 @@ export default function BlacklistedPlayersList(props) {
         <Table selectable style={{borderTop:'solid orange'}} inverted>
             <Table.Header>
                 <Table.Row>
+                    <Table.HeaderCell>ID</Table.HeaderCell>
                     <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Reasons</Table.HeaderCell>
                     <Table.HeaderCell>Created at</Table.HeaderCell>

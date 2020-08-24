@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
-import {Button, Icon, Modal, Popup, Table} from "semantic-ui-react";
+import {Button, Dimmer, Icon, Loader, Modal, Popup, Table} from "semantic-ui-react";
 import '../../css/Component/BlacklistedPlayersList.css';
 
 export default function BlacklistedPlayersList(props) {
-    const [playersList,setPlayerList] = useState(props.playersList);
     const [isModalOpen,setIsModalOpen] = useState(false);
 
     const actions = (
@@ -11,7 +10,6 @@ export default function BlacklistedPlayersList(props) {
             <Popup
                 trigger={<Icon onClick={() => setIsModalOpen(true)} className='icon-delete' name="trash"/>}
                 content='Remove this player from the blacklist'
-                inverted
                 position='left center'
             />
             <Modal
@@ -43,10 +41,10 @@ export default function BlacklistedPlayersList(props) {
             </Table.Row>
         </Table.Body>
     );
-    if(playersList.length > 0){
+    if(props.playersList.length > 0){
         list = (
             <Table.Body>
-                {playersList.map((player, index) => {
+                {props.playersList.map((player, index) => {
                     return (
                         <Table.Row key={index}>
                             <Table.Cell>{player.id}</Table.Cell>
@@ -62,18 +60,23 @@ export default function BlacklistedPlayersList(props) {
     }
 
     return (
-        <Table selectable style={{borderTop:'solid orange'}} inverted>
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell>ID</Table.HeaderCell>
-                    <Table.HeaderCell>Name</Table.HeaderCell>
-                    <Table.HeaderCell>Reasons</Table.HeaderCell>
-                    <Table.HeaderCell>Created at</Table.HeaderCell>
-                    <Table.HeaderCell/>
-                </Table.Row>
-            </Table.Header>
-            {list}
-        </Table>
+        <div>
+            <Dimmer active={props.loading}>
+                <Loader>Loading</Loader>
+            </Dimmer>
+            <Table selectable style={{borderTop:'solid orange'}} inverted>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>ID</Table.HeaderCell>
+                        <Table.HeaderCell>Name</Table.HeaderCell>
+                        <Table.HeaderCell>Reasons</Table.HeaderCell>
+                        <Table.HeaderCell>Created at</Table.HeaderCell>
+                        <Table.HeaderCell/>
+                    </Table.Row>
+                </Table.Header>
+                {list}
+            </Table>
+        </div>
     );
 }
 

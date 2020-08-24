@@ -40,7 +40,8 @@ function App() {
     const [simpleSubmit, setSimpleSubmit] = useState(false);
     const [largeSubmit, setLargeSubmit] = useState(false);
     const [isModalOpen,setIsModalOpen] = useState(false);
-    const [blacklistedPlayers,setblacklistedPlayers] = useState([]);
+    const [isListLoading,setIsListLoading] = useState(false);
+    const [blacklistedPlayers,setBlacklistedPlayers] = useState([]);
 
     const [newPlayerName,setNewPlayerName] = useState('');
     const [newPlayerReasons,setNewPlayerReasons] = useState([]);
@@ -81,8 +82,10 @@ function App() {
     }
 
     useEffect(()=>{
+        setIsListLoading(true);
         axios.get('/api/player/all').then(data => {
-            setblacklistedPlayers(data.data);
+            setBlacklistedPlayers(data.data);
+            setIsListLoading(false);
         });
         //TODO : get all reasons
     },[]);
@@ -173,7 +176,7 @@ function App() {
                 </Grid.Row>
                 <Grid.Row centered>
                     <Grid.Column>
-                        <BlacklistedPlayersList playersList={blacklistedPlayers}/>
+                        <BlacklistedPlayersList playersList={blacklistedPlayers} loading={isListLoading}/>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

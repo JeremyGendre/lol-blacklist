@@ -195,7 +195,10 @@ function App() {
                             </Modal.Content>
                             <Modal.Actions>
                                 <Button onClick={clearModal}>Cancel</Button>
-                                <Button positive loading={newPlayerFormSubmitting} onClick={handleNewPlayerForm}>Submit</Button>
+                                <Button positive
+                                        loading={newPlayerFormSubmitting}
+                                        disabled={newPlayerFormSubmitting}
+                                        onClick={handleNewPlayerForm}>Submit</Button>
                             </Modal.Actions>
                         </Modal>
                     </Grid.Column>

@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\BlacklistedPlayer;
 use App\Entity\Reason;
 use App\Repository\BlacklistedPlayerRepository;
+use App\Repository\ReasonRepository;
+use App\Service\ReasonHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,25 +39,33 @@ class BlacklistedPlayerController extends AbstractController
 
     /**
      * @Route("/new", name="new_player", methods={"POST"})
-     * @param BlacklistedPlayerRepository $blacklistedPlayerRepository
      * @param Request $request
+     * @param ReasonRepository $reasonRepository
+     * @param ReasonHelper $reasonHelper
      * @return JsonResponse
      */
     public function newPlayer(
-        BlacklistedPlayerRepository $blacklistedPlayerRepository,
-        Request $request
+        Request $request,
+        ReasonRepository $reasonRepository,
+        ReasonHelper $reasonHelper
     ): JsonResponse
     {
+        $manager = $this->getDoctrine()->getManager();
         $data = $request->request->get('player');
         $player = new BlacklistedPlayer();
         $player->setName($data['name']);
         $player->setCreatedAt(new \DateTimeImmutable());
-        foreach ($data['reasons'] as $reasonName){
-            $reason = new Reason();
-            $reason->setLabel($reasonName);
+        foreach ($data['reasons'] as $reasonId){
+            $reason = $reasonRepository->findOneBy(['id'=>$reasonId]);
+            if($reason !== null){
+                $player->addReason($reason);
+            }
+        }
+        if($player->getReasons()->count()){
+            $reason = $reasonHelper->findOrCreateDefaultReason(Reason::DEFAULT_REASON_LABEL);
             $player->addReason($reason);
         }
-        $manager = $this->getDoctrine()->getManager();
+
         $manager->persist($player);
         $manager->flush();
         return new JsonResponse($player->serialize());

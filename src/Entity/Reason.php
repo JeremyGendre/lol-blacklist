@@ -13,6 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Reason implements MySerializerInterface
 {
+
+    const DEFAULT_REASON_LABEL = 'Other';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

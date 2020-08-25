@@ -24,7 +24,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $reasonNames = [
-            "Other",
+            Reason::DEFAULT_REASON_LABEL,
             "Toxic",
             "Intentionnal feeding",
             "AFK",

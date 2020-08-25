@@ -5,36 +5,26 @@ import {Button, Container, Dropdown, Form, Grid, Input, Message, Modal, Popup} f
 import 'semantic-ui-css/semantic.min.css';
 import '../css/app.css';
 import BlacklistedPlayersList from "./Component/BlacklistedPlayersList";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
-const dummyPlayers = [
-    {
-        id: 1,
-        name: 'sardoche',
-        reasons: ['intentionnal feeding', 'Toxic',],
-        createdAt: Date.now()
-    },
-    {
-        id: 2,
-        name:'narkus',
-        reasons: ['Toxic'],
-        createdAt: Date.now()
-    },
-    {
-        id: 3,
-        name:'tyler1',
-        reasons: ['Toxic'],
-        createdAt: Date.now()
-    },
-];
 
 const dummyReasons = [
     { key:0, value:0, text: 'Other'},
     { key:1, value:1, text: 'Feed'},
     { key:2, value:2, text: 'Toxic'},
-    { key:3, value:3, text: 'afk'},
+    { key:3, value:3, text: 'Afk'},
 ];
 
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 function App() {
+    /** Snackbar **/
+    const [snackbar, setSnackbar] = useState(null);
+
+    /** Common **/
     const [simpleValue, setSimpleValue] = useState('');
     const [largeValue, setLargeValue] = useState('');
     const [simpleSubmit, setSimpleSubmit] = useState(false);
@@ -42,7 +32,9 @@ function App() {
     const [isModalOpen,setIsModalOpen] = useState(false);
     const [isListLoading,setIsListLoading] = useState(false);
     const [blacklistedPlayers,setBlacklistedPlayers] = useState([]);
+    const [reasonsList,setReasonsList] = useState(dummyReasons);
 
+    /** New player States **/
     const [newPlayerName,setNewPlayerName] = useState('');
     const [newPlayerReasons,setNewPlayerReasons] = useState([]);
     const [newPlayerFormError,setNewPlayerFormError] = useState('');
@@ -63,6 +55,27 @@ function App() {
         let formElement = document.getElementById('new-player-form');
         if(formElement.reportValidity() !== false && checkNewPlayerValues() === true){
             setNewPlayerFormSubmitting(true);
+            axios.post('/api/player/new',{
+                name: newPlayerName,
+                reasons: newPlayerReasons
+            }).then(data => {
+                setNewPlayerFormSubmitting(false);
+                if(data.data.success === true){
+                    setBlacklistedPlayers(blacklistedPlayers.concat(data.data.content));
+                    setSnackbar({
+                        type : 'success',
+                        text : 'Player successfully registered'
+                    });
+                    clearModal();
+                }else{
+                    console.error(data.data.message);
+                    setNewPlayerFormError(data.data.message);
+                }
+            }).catch(e => {
+                console.error(e);
+                setNewPlayerFormSubmitting(false);
+                setNewPlayerFormError("An error occurred, registration impossible.");
+            });
         }else if(newPlayerReasons.length === 0){
             setNewPlayerFormError('All fields need to be filled');
         }
@@ -81,13 +94,26 @@ function App() {
         setNewPlayerFormSubmitting(false);
     }
 
+    function handleCloseSnackbar(event, reason){
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnackbar(null);
+    }
+
     useEffect(()=>{
         setIsListLoading(true);
         axios.get('/api/player/all').then(data => {
-            setBlacklistedPlayers(data.data);
-            setIsListLoading(false);
+            if(data.data.success === true){
+                setBlacklistedPlayers(data.data.content);
+                setIsListLoading(false);
+            }
         });
-        //TODO : get all reasons
+        axios.get('/api/reason/all').then(data => {
+            if(data.data.success === true){
+                setReasonsList(data.data.content);
+            }
+        });
     },[]);
 
     return (
@@ -161,7 +187,7 @@ function App() {
                                                     className="full-width"
                                                     placeholder='Select one or many reasons'
                                                     onChange={(e, {value})=>setNewPlayerReasons(value)}
-                                                    multiple selection search required options={dummyReasons} />
+                                                    multiple selection search required options={reasonsList} />
                                             </Form.Field>
                                         </Form.Group>
                                     </Form>
@@ -174,6 +200,13 @@ function App() {
                         </Modal>
                     </Grid.Column>
                 </Grid.Row>
+                {snackbar !== null && (
+                    <Snackbar open={true} autoHideDuration={1500} onClose={handleCloseSnackbar}>
+                        <Alert onClose={handleCloseSnackbar} severity={snackbar.type}>
+                            {snackbar.text}
+                        </Alert>
+                    </Snackbar>
+                )}
                 <Grid.Row centered>
                     <Grid.Column>
                         <BlacklistedPlayersList playersList={blacklistedPlayers} loading={isListLoading}/>

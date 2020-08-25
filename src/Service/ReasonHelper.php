@@ -5,6 +5,10 @@ namespace App\Service;
 use App\Entity\Reason;
 use App\Repository\ReasonRepository;
 
+/**
+ * Class ReasonHelper
+ * @package App\Service
+ */
 class ReasonHelper
 {
     /**

@@ -32,6 +32,7 @@ function App() {
     const [isModalOpen,setIsModalOpen] = useState(false);
     const [isListLoading,setIsListLoading] = useState(false);
     const [blacklistedPlayers,setBlacklistedPlayers] = useState([]);
+    const [blacklistedPlayersFound,setBlacklistedPlayersFound] = useState([]);
     const [reasonsList,setReasonsList] = useState(dummyReasons);
 
     /** New player States **/
@@ -126,6 +127,35 @@ function App() {
         });
     },[]);
 
+    function handleSimpleInputChange(){
+        if(simpleValue !== ''){
+            setIsListLoading(true);
+            setSimpleSubmit(true);
+            axios.post('/api/player/search/simple',{name:simpleValue}).then(data => {
+                if(data.data.success === true){
+                    setBlacklistedPlayersFound(data.data.content);
+                    setIsListLoading(false);
+                    setSimpleSubmit(false);
+                }
+            }).catch(e => {
+                console.error(e);
+                setIsListLoading(false);
+                setSimpleSubmit(false);
+                setBlacklistedPlayersFound([]);
+            });
+        }else{
+            setIsListLoading(false);
+            setSimpleSubmit(false);
+            setBlacklistedPlayersFound([]);
+        }
+    }
+
+    let playersList = blacklistedPlayers;
+    if(blacklistedPlayersFound.length > 0){
+        console.log('ouais re '+blacklistedPlayersFound.length);
+        playersList = blacklistedPlayersFound;
+    }
+
     return (
         <Container className="app-container">
             <Grid>
@@ -138,7 +168,7 @@ function App() {
                                    size="large"
                                    loading={simpleSubmit}
                                    defaultValue={simpleValue}
-                                   onChange={(e) => setSimpleValue(e.currentTarget.value)}
+                                   onChange={(e) => {handleSimpleInputChange();setSimpleValue(e.currentTarget.value)}}
                                    style={{padding:'1em',borderBottom:'solid 1px lightgrey'}}
                                    placeholder='Search...' />
                         </Form>
@@ -223,7 +253,7 @@ function App() {
                 <Grid.Row centered>
                     <Grid.Column>
                         <BlacklistedPlayersList
-                            playersList={blacklistedPlayers}
+                            playersList={playersList}
                             loading={isListLoading}
                             handleDeletedPlayer={handleDeletedPlayer}/>
                     </Grid.Column>

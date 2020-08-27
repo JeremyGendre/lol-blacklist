@@ -19,6 +19,16 @@ class BlacklistedPlayerRepository extends ServiceEntityRepository
         parent::__construct($registry, BlacklistedPlayer::class);
     }
 
+    public function findByName($name)
+    {
+        return $this->createQueryBuilder('b')
+            ->andWhere('b.name = :val')
+            ->setParameter('val', $name)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     // /**
     //  * @return BlacklistedPlayer[] Returns an array of BlacklistedPlayer objects
     //  */

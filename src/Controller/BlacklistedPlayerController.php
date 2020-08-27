@@ -9,6 +9,7 @@ use App\Repository\ReasonRepository;
 use App\Service\BlacklistedPlayerHelper;
 use App\Service\JsonResponseTrait;
 use App\Service\ReasonHelper;
+use App\Service\RequestTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,21 +23,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class BlacklistedPlayerController extends AbstractController
 {
     use JsonResponseTrait;
+    use RequestTrait;
 
     /**
      * @Route("/all", name="all_players", methods={"GET"})
      * @param BlacklistedPlayerRepository $blacklistedPlayerRepository
+     * @param BlacklistedPlayerHelper $blacklistedPlayerHelper
      * @return JsonResponse
      */
     public function allPlayers(
-        BlacklistedPlayerRepository $blacklistedPlayerRepository
+        BlacklistedPlayerRepository $blacklistedPlayerRepository,
+        BlacklistedPlayerHelper $blacklistedPlayerHelper
     ): JsonResponse
     {
         $list = $blacklistedPlayerRepository->findAll();
-        $returnedList = [];
-        foreach ($list as $player){
-            $returnedList[] = $player->serialize();
-        }
+        $returnedList = $blacklistedPlayerHelper->serializeMultiplePlayers($list);
         return $this->formattedJsonResponse($returnedList);
     }
 
@@ -56,8 +57,7 @@ class BlacklistedPlayerController extends AbstractController
     ): JsonResponse
     {
         $manager = $this->getDoctrine()->getManager();
-        $plainData = $request->getContent();
-        $data = json_decode($plainData); //gives an object ( I actually dont know why but ye ^^' )
+        $data = $this->handlePostRequest($request);
         if($blacklistedPlayerHelper->checkNameUniqueness($data->name) === false){
             return $this->formattedErrorJsonResponse('A player named "'. $data->name . '" already exists.');
         }
@@ -92,5 +92,27 @@ class BlacklistedPlayerController extends AbstractController
         $manager->remove($player);
         $manager->flush();
         return $this->formattedJsonResponse("Player successfully deleted");
+    }
+
+    /**
+     * @Route("/search/simple", name="search_player_simply", methods={"POST"})
+     * @param Request $request
+     * @param BlacklistedPlayerRepository $blacklistedPlayerRepository
+     * @param BlacklistedPlayerHelper $blacklistedPlayerHelper
+     * @return JsonResponse
+     */
+    public function findPlayersSimply(
+        Request $request,
+        BlacklistedPlayerRepository $blacklistedPlayerRepository,
+        BlacklistedPlayerHelper $blacklistedPlayerHelper
+    ):JsonResponse{
+        $data = $this->handlePostRequest($request);
+        if(!is_string($data->name) || $data->name === ''){
+            $result = $blacklistedPlayerRepository->findAll();
+        }else{
+            $result = $blacklistedPlayerRepository->findByName($data->name);
+        }
+        $result = $blacklistedPlayerHelper->serializeMultiplePlayers($result);
+        return $this->formattedJsonResponse($result);
     }
 }

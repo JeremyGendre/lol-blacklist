@@ -50,6 +50,16 @@ function App() {
         console.log('large search');
     }
 
+    function handleDeletedPlayer(playerToDelete){
+        let newList = [];
+        blacklistedPlayers.forEach(player=>{
+            if(player.id !== playerToDelete){
+                newList.push(player);
+            }
+        });
+        setBlacklistedPlayers(newList);
+    }
+
     function handleNewPlayerForm(){
         setNewPlayerFormError('');
         let formElement = document.getElementById('new-player-form');
@@ -212,7 +222,10 @@ function App() {
                 )}
                 <Grid.Row centered>
                     <Grid.Column>
-                        <BlacklistedPlayersList playersList={blacklistedPlayers} loading={isListLoading}/>
+                        <BlacklistedPlayersList
+                            playersList={blacklistedPlayers}
+                            loading={isListLoading}
+                            handleDeletedPlayer={handleDeletedPlayer}/>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>

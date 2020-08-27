@@ -10,13 +10,16 @@ export default function BlacklistedPlayersList(props) {
     const [isModalOpen,setIsModalOpen] = useState(false);
     const [isDeleting,setIsDeleting] = useState(false);
     const [playerToDelete,setPlayerToDelete] = useState(null);
+    if(typeof props.handleDeletedPlayer !== 'function'){
+        props.handleDeletedPlayer = () => {}
+    }
 
     function deletePlayer(){
         setIsDeleting(true);
         axios.delete('/api/player/delete/'+playerToDelete).then(data=>{
             if(data.data.success === true){
                 setSnackbar({type : 'success', text : data.data.content});
-                document.getElementById("row-player-"+playerToDelete).remove();
+                props.handleDeletedPlayer(playerToDelete);
             }else{
                 setSnackbar({type : 'error', text : data.data.message});
             }

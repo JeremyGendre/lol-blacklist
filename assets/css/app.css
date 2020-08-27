@@ -25,6 +25,14 @@ body {
     width:100%;
 }
 
+.d-block{
+    display: block;
+}
+
+.d-none{
+    display: none;
+}
+
 .ui.form input[type="text"]:focus{
     color:inherit !important;
 }

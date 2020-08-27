@@ -106,10 +106,9 @@ class BlacklistedPlayerController extends AbstractController
         BlacklistedPlayerRepository $blacklistedPlayerRepository,
         BlacklistedPlayerHelper $blacklistedPlayerHelper
     ):JsonResponse{
+        $result = [];
         $data = $this->handlePostRequest($request);
-        if(!is_string($data->name) || $data->name === ''){
-            $result = $blacklistedPlayerRepository->findAll();
-        }else{
+        if(is_string($data->name) && $data->name !== ''){
             $result = $blacklistedPlayerRepository->findByName($data->name);
         }
         $result = $blacklistedPlayerHelper->serializeMultiplePlayers($result);

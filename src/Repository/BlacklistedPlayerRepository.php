@@ -22,8 +22,8 @@ class BlacklistedPlayerRepository extends ServiceEntityRepository
     public function findByName($name)
     {
         return $this->createQueryBuilder('b')
-            ->andWhere('b.name = :val')
-            ->setParameter('val', $name)
+            ->andWhere('b.name like :val')
+            ->setParameter('val', '%'.$name.'%')
             ->getQuery()
             ->getResult()
             ;

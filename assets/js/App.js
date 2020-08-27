@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import {Button, Container, Dropdown, Form, Grid, Input, Message, Modal, Popup} from "semantic-ui-react";
+import {Button, Container, Dropdown, Form, Grid, Icon, Input, Message, Modal, Popup} from "semantic-ui-react";
 import 'semantic-ui-css/semantic.min.css';
 import '../css/app.css';
 import BlacklistedPlayersList from "./Component/BlacklistedPlayersList";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import SubmitButton from "./Component/SubmitButton";
+import BlacklistedPlayersFound from "./Component/BlacklistedPlayersFound";
 
 
 const dummyReasons = [
@@ -42,8 +44,22 @@ function App() {
     const [newPlayerFormSubmitting,setNewPlayerFormSubmitting] = useState(false);
 
     function handleSimpleSearchSubmit(){
-        setSimpleSubmit(true);
-        console.log('simple search');
+        if(simpleValue !== ''){
+            setSimpleSubmit(true);
+            axios.post('/api/player/search/simple',{name:simpleValue}).then(data => {
+                if(data.data.success === true){
+                    setBlacklistedPlayersFound(data.data.content);
+                    setSimpleSubmit(false);
+                }
+            }).catch(e => {
+                console.error(e);
+                setSimpleSubmit(false);
+                setBlacklistedPlayersFound([]);
+            });
+        }else{
+            setSimpleSubmit(false);
+            setBlacklistedPlayersFound([]);
+        }
     }
 
     function handleLargeSearchSubmit(){
@@ -72,6 +88,7 @@ function App() {
             }).then(data => {
                 setNewPlayerFormSubmitting(false);
                 if(data.data.success === true){
+                    setBlacklistedPlayersFound([]);
                     setBlacklistedPlayers(blacklistedPlayers.concat(data.data.content));
                     setSnackbar({
                         type : 'success',
@@ -112,6 +129,13 @@ function App() {
         setSnackbar(null);
     }
 
+    function handleSimpleValueChange(value){
+        setSimpleValue(value);
+        if(value === ''){
+            setBlacklistedPlayersFound([]);
+        }
+    }
+
     useEffect(()=>{
         setIsListLoading(true);
         axios.get('/api/player/all').then(data => {
@@ -127,50 +151,22 @@ function App() {
         });
     },[]);
 
-    function handleSimpleInputChange(){
-        if(simpleValue !== ''){
-            setIsListLoading(true);
-            setSimpleSubmit(true);
-            axios.post('/api/player/search/simple',{name:simpleValue}).then(data => {
-                if(data.data.success === true){
-                    setBlacklistedPlayersFound(data.data.content);
-                    setIsListLoading(false);
-                    setSimpleSubmit(false);
-                }
-            }).catch(e => {
-                console.error(e);
-                setIsListLoading(false);
-                setSimpleSubmit(false);
-                setBlacklistedPlayersFound([]);
-            });
-        }else{
-            setIsListLoading(false);
-            setSimpleSubmit(false);
-            setBlacklistedPlayersFound([]);
-        }
-    }
-
-    let playersList = blacklistedPlayers;
-    if(blacklistedPlayersFound.length > 0){
-        console.log('ouais re '+blacklistedPlayersFound.length);
-        playersList = blacklistedPlayersFound;
-    }
-
     return (
         <Container className="app-container">
             <Grid>
                 <Grid.Row centered columns={2}>
                     <Grid.Column className="text-center">
-                        <Form onSubmit={handleSimpleSearchSubmit}>
+                        <Form onSubmit={handleSimpleSearchSubmit} className='text-center'>
                             <Input transparent inverted
                                    icon='search'
                                    required
                                    size="large"
-                                   loading={simpleSubmit}
+                                   disabled={simpleSubmit}
                                    defaultValue={simpleValue}
-                                   onChange={(e) => {handleSimpleInputChange();setSimpleValue(e.currentTarget.value)}}
+                                   onChange={(e,{value}) => handleSimpleValueChange(value)}
                                    style={{padding:'1em',borderBottom:'solid 1px lightgrey'}}
                                    placeholder='Search...' />
+                            <SubmitButton loading={simpleSubmit} style={{marginLeft:'2em'}}/>
                         </Form>
                     </Grid.Column>
                     <Grid.Column className="text-center">
@@ -179,13 +175,17 @@ function App() {
                                    icon='search'
                                    required
                                    size="large"
-                                   loading={largeSubmit}
+                                   disabled={largeSubmit}
                                    defaultValue={largeValue}
                                    onChange={(e) => setLargeValue(e.currentTarget.value)}
                                    style={{padding:'1em',borderBottom:'solid 1px lightgrey'}}
                                    placeholder='Extended search...' />
+                            <SubmitButton loading={largeSubmit} style={{marginLeft:'2em'}}/>
                         </Form>
                     </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <BlacklistedPlayersFound playersFound={blacklistedPlayersFound}/>
                 </Grid.Row>
                 <Grid.Row verticalAlign='middle' columns={2}>
                     <Grid.Column id="player-total">
@@ -253,7 +253,7 @@ function App() {
                 <Grid.Row centered>
                     <Grid.Column>
                         <BlacklistedPlayersList
-                            playersList={playersList}
+                            playersList={blacklistedPlayers}
                             loading={isListLoading}
                             handleDeletedPlayer={handleDeletedPlayer}/>
                     </Grid.Column>

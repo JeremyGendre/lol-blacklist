@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card} from "semantic-ui-react";
+import {Card, List} from "semantic-ui-react";
 import '../../css/Component/BlacklistedPlayersFound.css';
 
 export default function BlacklistedPlayersFound(props) {
@@ -8,14 +8,23 @@ export default function BlacklistedPlayersFound(props) {
             {props.playersFound.length > 0 ? (
                 <div className='d-block text-center full-width'>{props.playersFound.length} players found</div>
             ) : (<></>)}
-            {props.playersFound.map(player => {
+            {props.playersFound.map((player,index) => {
                 return (
-                    <Card>
+                    <Card key={index} className='player-found-card'>
                         <Card.Content>
-                            <Card.Header>{player.name}</Card.Header>
-                            <Card.Meta>{player.createdAt}</Card.Meta>
-                            <Card.Description>
-                                {player.reasons.map(reason => <div>{reason}</div>)}
+                            <Card.Header className='player-found-card-header'>{player.name}</Card.Header>
+                            <Card.Meta className='player-found-card-meta'><small>{player.createdAt}</small></Card.Meta>
+                            <Card.Description className='player-found-card-description'>
+                                <List>
+                                    {player.reasons.map((reason,rIndex) => (
+                                        <List.Item key={rIndex}>
+                                            <List.Icon name='dot circle'/>
+                                            <List.Content>
+                                                {reason}
+                                            </List.Content>
+                                        </List.Item>
+                                    ))}
+                                </List>
                             </Card.Description>
                         </Card.Content>
                     </Card>

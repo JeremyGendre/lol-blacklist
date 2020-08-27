@@ -3,3 +3,25 @@
     border-bottom:solid 1px grey;
     padding-bottom: 1em;
 }
+
+.player-found-card{
+    background-color: #444 !important;
+    border: none !important;
+    box-shadow: 0 0 5px #222 !important;
+}
+
+.player-found-card-header{
+    border-bottom:solid 1px grey;
+}
+
+.player-found-card-meta{
+    color:grey !important;
+}
+
+.player-found-card-header, .player-found-card-description{
+    color:white !important;
+}
+
+.player-found-card-meta{
+    font-style: italic;
+}

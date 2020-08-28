@@ -16,16 +16,26 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+const largeSearch = 'pseudo 1 joined the lobby\n' +
+    'pseudo 2 joined the lobby\n' +
+    'pseudo 3 joined the lobby\n' +
+    'pseudo 4 joined the lobby\n' +
+    'pseudo 5 joined the lobby';
+
 function App() {
     /** Snackbar **/
     const [snackbar, setSnackbar] = useState(null);
 
-    /** Common **/
+    /** Values **/
     const [simpleValue, setSimpleValue] = useState('');
     const [largeValue, setLargeValue] = useState('');
+
+    /** Submit **/
     const [simpleSubmit, setSimpleSubmit] = useState(false);
     const [largeSubmit, setLargeSubmit] = useState(false);
     const [isListLoading,setIsListLoading] = useState(false);
+
+    /** Lists **/
     const [blacklistedPlayers,setBlacklistedPlayers] = useState([]);
     const [blacklistedPlayersFound,setBlacklistedPlayersFound] = useState([]);
 
@@ -97,6 +107,13 @@ function App() {
         setSnackbar(value);
     }
 
+    function handleLargeInputClick(event){
+        if(event.target.tagName !== 'INPUT'){
+            let childInputElement = event.target.querySelectorAll('input')[0];
+            childInputElement.focus();
+        }
+    }
+
     useEffect(()=>{
         setIsListLoading(true);
         axios.get('/api/player/all').then(data => {
@@ -113,29 +130,33 @@ function App() {
                 <Grid.Row centered columns={2}>
                     <Grid.Column className="text-center" mobile={16} tablet={8} computer={8}>
                         <Form onSubmit={handleSimpleSearchSubmit} className='text-center'>
-                            <Input transparent inverted
-                                   icon='search'
-                                   required
-                                   size="large"
-                                   disabled={simpleSubmit}
-                                   defaultValue={simpleValue}
-                                   onChange={(e,{value}) => handleSimpleValueChange(value)}
-                                   style={{padding:'1em',borderBottom:'solid 1px lightgrey'}}
-                                   placeholder='Search...' />
+                            <div className="search-input-container" onClick={(e)=>handleLargeInputClick(e)}>
+                                <Input transparent inverted
+                                       icon='search'
+                                       required
+                                       size="large"
+                                       disabled={simpleSubmit}
+                                       defaultValue={simpleValue}
+                                       onChange={(e,{value}) => handleSimpleValueChange(value)}
+                                       style={{margin:'1em'}}
+                                       placeholder='Search...' />
+                            </div>
                             <SubmitButton loading={simpleSubmit} style={{marginLeft:'2em'}}/>
                         </Form>
                     </Grid.Column>
                     <Grid.Column className="text-center" mobile={16} tablet={8} computer={8}>
                         <Form onSubmit={handleLargeSearchSubmit}>
-                            <Input transparent inverted
-                                   icon='search'
-                                   required
-                                   size="large"
-                                   disabled={largeSubmit}
-                                   defaultValue={largeValue}
-                                   onChange={(e) => setLargeValue(e.currentTarget.value)}
-                                   style={{padding:'1em',borderBottom:'solid 1px lightgrey'}}
-                                   placeholder='Extended search...' />
+                            <div className="search-input-container" onClick={(e)=>handleLargeInputClick(e)}>
+                                <Input transparent inverted
+                                       icon='search'
+                                       required
+                                       size="large"
+                                       disabled={largeSubmit}
+                                       defaultValue={largeValue}
+                                       onChange={(e) => setLargeValue(e.currentTarget.value)}
+                                       style={{margin:'1em'}}
+                                       placeholder='Extended search...' />
+                            </div>
                             <SubmitButton loading={largeSubmit} style={{marginLeft:'2em'}}/>
                         </Form>
                     </Grid.Column>

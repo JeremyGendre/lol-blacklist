@@ -11,6 +11,11 @@ body {
     padding-top:2em;
 }
 
+.search-input-container{
+    display:inline-block;
+    border-bottom:solid 1px lightgrey;
+}
+
 #player-total{
     display: table-cell;
     vertical-align: middle;

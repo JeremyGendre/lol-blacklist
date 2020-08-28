@@ -55,12 +55,19 @@ function App() {
 
     function handleDeletedPlayer(playerToDelete){
         let newList = [];
+        let newListFound = [];
         blacklistedPlayers.forEach(player=>{
             if(player.id !== playerToDelete){
                 newList.push(player);
             }
         });
+        blacklistedPlayersFound.forEach(player=>{
+            if(player.id !== playerToDelete){
+                newListFound.push(player);
+            }
+        });
         setBlacklistedPlayers(newList);
+        setBlacklistedPlayersFound(newListFound);
     }
 
     function handleCloseSnackbar(event, reason){
@@ -134,7 +141,11 @@ function App() {
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
-                    <BlacklistedPlayersFound playersFound={blacklistedPlayersFound}/>
+                    <BlacklistedPlayersFound
+                        playersFound={blacklistedPlayersFound}
+                        handleDeletedPlayer={handleDeletedPlayer}
+                        handleSetSnackBar={handleSetSnackBar}
+                        handleCloseSnackbar={handleCloseSnackbar}/>
                 </Grid.Row>
                 <Grid.Row verticalAlign='middle' columns={2}>
                     <Grid.Column id="player-total">

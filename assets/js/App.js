@@ -86,6 +86,10 @@ function App() {
         }
     }
 
+    function handleSetSnackBar(value){
+        setSnackbar(value);
+    }
+
     useEffect(()=>{
         setIsListLoading(true);
         axios.get('/api/player/all').then(data => {
@@ -100,7 +104,7 @@ function App() {
         <Container className="app-container">
             <Grid>
                 <Grid.Row centered columns={2}>
-                    <Grid.Column className="text-center">
+                    <Grid.Column className="text-center" mobile={16} tablet={8} computer={8}>
                         <Form onSubmit={handleSimpleSearchSubmit} className='text-center'>
                             <Input transparent inverted
                                    icon='search'
@@ -114,7 +118,7 @@ function App() {
                             <SubmitButton loading={simpleSubmit} style={{marginLeft:'2em'}}/>
                         </Form>
                     </Grid.Column>
-                    <Grid.Column className="text-center">
+                    <Grid.Column className="text-center" mobile={16} tablet={8} computer={8}>
                         <Form onSubmit={handleLargeSearchSubmit}>
                             <Input transparent inverted
                                    icon='search'
@@ -140,22 +144,24 @@ function App() {
                         <CreatePlayer handleNewPlayer={handleNewPlayer}/>
                     </Grid.Column>
                 </Grid.Row>
-                {snackbar !== null && (
-                    <Snackbar open={true} autoHideDuration={2000} onClose={handleCloseSnackbar}>
-                        <Alert onClose={handleCloseSnackbar} severity={snackbar.type}>
-                            {snackbar.text}
-                        </Alert>
-                    </Snackbar>
-                )}
                 <Grid.Row centered>
                     <Grid.Column>
                         <BlacklistedPlayersList
                             playersList={blacklistedPlayers}
                             loading={isListLoading}
-                            handleDeletedPlayer={handleDeletedPlayer}/>
+                            handleDeletedPlayer={handleDeletedPlayer}
+                            handleSetSnackBar={handleSetSnackBar}
+                            handleCloseSnackbar={handleCloseSnackbar}/>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
+            {snackbar !== null && (
+                <Snackbar open={true} autoHideDuration={2000} onClose={handleCloseSnackbar}>
+                    <Alert onClose={handleCloseSnackbar} severity={snackbar.type}>
+                        {snackbar.text}
+                    </Alert>
+                </Snackbar>
+            )}
         </Container>
     );
 }

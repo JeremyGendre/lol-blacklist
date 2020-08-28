@@ -12,7 +12,9 @@ export default function BlacklistedPlayersFound(props) {
                 return (
                     <Card key={index} className='player-found-card'>
                         <Card.Content>
-                            <Card.Header className='player-found-card-header'>{player.name}</Card.Header>
+                            <Card.Header className='player-found-card-header'>
+                                {player.name}<span><Icon/></span>
+                            </Card.Header>
                             <Card.Meta className='player-found-card-meta'><small>{player.createdAt}</small></Card.Meta>
                             <Card.Description className='player-found-card-description'>
                                 <List>

@@ -8,10 +8,15 @@
     background-color: #444 !important;
     border: none !important;
     box-shadow: 0 0 5px #222 !important;
+    transition: all 0.15s ease-in-out !important;
 }
 
 .player-found-card-header{
     border-bottom:solid 1px grey;
+}
+
+.player-found-card:hover{
+    box-shadow: 2px 2px 15px #111 !important;
 }
 
 .player-found-card-meta{

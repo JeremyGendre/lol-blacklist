@@ -4,44 +4,24 @@ import {Button, Confirm, Dimmer, Icon, Loader, Modal, Popup, Table} from "semant
 import '../../css/Component/BlacklistedPlayersList.css';
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
+import DeletePlayer from "./DeletePlayer";
 
 export default function BlacklistedPlayersList(props) {
-    const [snackbar, setSnackbar] = useState(null);
-    const [isModalOpen,setIsModalOpen] = useState(false);
-    const [isDeleting,setIsDeleting] = useState(false);
-    const [playerToDelete,setPlayerToDelete] = useState(null);
+
     if(typeof props.handleDeletedPlayer !== 'function'){
         props.handleDeletedPlayer = () => {}
     }
 
-    function deletePlayer(){
-        setIsDeleting(true);
-        axios.delete('/api/player/delete/'+playerToDelete).then(data=>{
-            if(data.data.success === true){
-                setSnackbar({type : 'success', text : data.data.content});
-                props.handleDeletedPlayer(playerToDelete);
-            }else{
-                setSnackbar({type : 'error', text : data.data.message});
-            }
-            clearModal();
-        }).catch(error=>{
-            console.error(error);
-            clearModal();
-            setSnackbar({type : 'error', text : 'An error occurred, player impossible to delete'});
-        });
+    function handleSetSnackBar(value){
+        props.handleSetSnackBar(value);
     }
 
-    function clearModal(){
-        setIsDeleting(false);
-        setIsModalOpen(false);
-        setPlayerToDelete(null);
+    function handleDeletedPlayer(playerToDelete){
+        props.handleDeletedPlayer(playerToDelete);
     }
 
     function handleCloseSnackbar(event, reason){
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnackbar(null);
+        props.handleCloseSnackbar(event,reason);
     }
 
     return (
@@ -69,30 +49,11 @@ export default function BlacklistedPlayersList(props) {
                                     <Table.Cell>{player.reasons.map((reason,index)=><div key={index}>{reason}</div>)}</Table.Cell>
                                     <Table.Cell>{player.createdAt}</Table.Cell>
                                     <Table.Cell collapsing>
-                                        <Popup
-                                            trigger={<Icon onClick={() => {setIsModalOpen(true); setPlayerToDelete(player.id);}} className='icon-delete' name="trash"/>}
-                                            content='Remove this player from the blacklist'
-                                            position='left center'
-                                        />
-                                        <Modal
-                                            centered
-                                            size='mini'
-                                            open={isModalOpen}
-                                            onClose={clearModal}
-                                            onOpen={() => setIsModalOpen(true)}
-                                            style={{color:'rgba(0,0,0,.85)'}}
-                                        >
-                                            <Modal.Header>Remove this player</Modal.Header>
-                                            <Modal.Content>
-                                                <Modal.Description>
-                                                    Are you sure to remove this player from the list ?
-                                                </Modal.Description>
-                                            </Modal.Content>
-                                            <Modal.Actions>
-                                                <Button negative onClick={clearModal}>No</Button>
-                                                <Button positive loading={isDeleting} disabled={isDeleting} onClick={deletePlayer}>Yes</Button>
-                                            </Modal.Actions>
-                                        </Modal>
+                                        <DeletePlayer
+                                            player={player}
+                                            handleCloseSnackbar={handleCloseSnackbar}
+                                            handleDeletedPlayer={handleDeletedPlayer}
+                                            handleSetSnackBar={handleSetSnackBar}/>
                                     </Table.Cell>
                                 </Table.Row>
                             );
@@ -106,13 +67,6 @@ export default function BlacklistedPlayersList(props) {
                     </Table.Body>
                 )}
             </Table>
-            {snackbar !== null && (
-                <Snackbar open={true} autoHideDuration={1500} onClose={handleCloseSnackbar}>
-                    <Alert onClose={handleCloseSnackbar} severity={snackbar.type}>
-                        {snackbar.text}
-                    </Alert>
-                </Snackbar>
-            )}
         </div>
     );
 }

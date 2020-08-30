@@ -13,3 +13,8 @@ Then :
 - ``php bin/console cache:clear``
 - ``yarn encore dev`` to make **webpack encore** watch and compile your js & css files
 - ``symfony serve`` to start the php development server
+
+
+**OR** If you have **make** installed on your computer :
+
+``make install`` or ``make install-dataset``

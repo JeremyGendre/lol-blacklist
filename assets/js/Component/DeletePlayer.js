@@ -38,7 +38,9 @@ export default function DeletePlayer(props) {
     return (
         <>
             <Popup
-                trigger={<Icon onClick={() => {setIsModalOpen(true); setPlayerToDelete(props.player.id);}} size={iconSize} className='icon-delete' name="trash"/>}
+                trigger={
+                    <Icon onClick={() => {setIsModalOpen(true);setPlayerToDelete(props.player.id);}}
+                          size={iconSize} className='icon-delete' name="trash"/>}
                 content='Remove this player from the blacklist'
                 position='left center'
             />

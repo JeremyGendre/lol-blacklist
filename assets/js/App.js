@@ -45,8 +45,11 @@ function App() {
             axios.post('/api/player/search/simple',{name:simpleValue}).then(data => {
                 if(data.data.success === true){
                     setBlacklistedPlayersFound(data.data.content);
-                    setSimpleSubmit(false);
+                }else{
+                    console.error(data.data.message);
+                    setSnackbar({text:data.data.message,type:'error'});
                 }
+                setSimpleSubmit(false);
             }).catch(e => {
                 console.error(e);
                 setSimpleSubmit(false);
@@ -59,8 +62,25 @@ function App() {
     }
 
     function handleLargeSearchSubmit(){
-        setLargeSubmit(true);
-        console.log('large search');
+        if(largeValue !== ''){
+            setLargeSubmit(true);
+            axios.post('/api/player/search/wide',{content:largeValue}).then(data => {
+                if(data.data.success === true){
+                    setBlacklistedPlayersFound(data.data.content);
+                }else{
+                    console.error(data.data.message);
+                    setSnackbar({text:data.data.message,type:'error'});
+                }
+                setLargeSubmit(false);
+            }).catch(e => {
+                console.error(e);
+                setLargeSubmit(false);
+                setBlacklistedPlayersFound([]);
+            });
+        }else{
+            setLargeSubmit(false);
+            setBlacklistedPlayersFound([]);
+        }
     }
 
     function handleDeletedPlayer(playerToDelete){
@@ -96,8 +116,8 @@ function App() {
         });
     }
 
-    function handleSimpleValueChange(value){
-        setSimpleValue(value);
+    function handleSearchValuesChange(value,type = 'simple'){
+        (type === 'simple') ? setSimpleValue(value) : setLargeValue(value);
         if(value === ''){
             setBlacklistedPlayersFound([]);
         }
@@ -137,7 +157,7 @@ function App() {
                                        size="large"
                                        disabled={simpleSubmit}
                                        defaultValue={simpleValue}
-                                       onChange={(e,{value}) => handleSimpleValueChange(value)}
+                                       onChange={(e,{value}) => handleSearchValuesChange(value,'simple')}
                                        style={{margin:'1em'}}
                                        placeholder='Search...' />
                             </div>
@@ -153,7 +173,7 @@ function App() {
                                        size="large"
                                        disabled={largeSubmit}
                                        defaultValue={largeValue}
-                                       onChange={(e) => setLargeValue(e.currentTarget.value)}
+                                       onChange={(e,{value}) => handleSearchValuesChange(value,'wide')}
                                        style={{margin:'1em'}}
                                        placeholder='Extended search...' />
                             </div>

@@ -1,7 +1,9 @@
 .icon-delete{
     color: #c63232;
+    transition: all 0.15s ease-in-out;
 }
 
 .icon-delete:hover{
     cursor:pointer;
+    color: #8d2d2d;
 }

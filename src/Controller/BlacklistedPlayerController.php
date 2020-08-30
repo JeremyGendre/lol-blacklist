@@ -114,4 +114,29 @@ class BlacklistedPlayerController extends AbstractController
         $result = $blacklistedPlayerHelper->serializeMultiplePlayers($result);
         return $this->formattedJsonResponse($result);
     }
+
+    /**
+     * @Route("/search/wide", name="search_player_wide", methods={"POST"})
+     * @param Request $request
+     * @param BlacklistedPlayerRepository $blacklistedPlayerRepository
+     * @param BlacklistedPlayerHelper $blacklistedPlayerHelper
+     * @return JsonResponse
+     */
+    public function findPlayersWide(
+        Request $request,
+        BlacklistedPlayerRepository $blacklistedPlayerRepository,
+        BlacklistedPlayerHelper $blacklistedPlayerHelper
+    ):JsonResponse{
+        $data = $this->handlePostRequest($request);
+        $arrayResult = array_filter(explode('joined the lobby',$data->content)); // maybe redo it for a bunch of languages
+        if(count($arrayResult) > 50){
+            return $this->formattedErrorJsonResponse("Too much entries ...");
+        }
+        $result = [];
+        foreach ($arrayResult as $name){
+            $result = array_merge($result,$blacklistedPlayerRepository->findByName(trim($name)));
+        }
+        $result = $blacklistedPlayerHelper->serializeMultiplePlayers($result);
+        return $this->formattedJsonResponse($result);
+    }
 }

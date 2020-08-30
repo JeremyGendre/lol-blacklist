@@ -43,4 +43,13 @@ class ReasonHelper
         $reason->setLabel(Reason::DEFAULT_REASON_LABEL);
         return $reason;
     }
+
+    /**
+     * @param string $label
+     * @return bool
+     */
+    public function checkLabelUniqueness(string $label){
+        $reason = $this->reasonRepository->findOneBy(['label'=> $label]);
+        return $reason === null;
+    }
 }

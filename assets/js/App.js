@@ -10,6 +10,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import SubmitButton from "./Component/SubmitButton";
 import BlacklistedPlayersFound from "./Component/BlacklistedPlayersFound";
 import CreatePlayer from "./Component/CreatePlayer";
+import ReasonForm from "./Component/ReasonForm";
 
 
 function Alert(props) {
@@ -38,6 +39,7 @@ function App() {
     /** Lists **/
     const [blacklistedPlayers,setBlacklistedPlayers] = useState([]);
     const [blacklistedPlayersFound,setBlacklistedPlayersFound] = useState([]);
+    const [reasonsList,setReasonsList] = useState([]);
 
     function handleSimpleSearchSubmit(){
         if(simpleValue !== ''){
@@ -142,6 +144,11 @@ function App() {
                 setIsListLoading(false);
             }
         });
+        axios.get('/api/reason/all').then(data => {
+            if(data.data.success === true){
+                setReasonsList(data.data.content);
+            }
+        });
     },[]);
 
     return (
@@ -188,12 +195,18 @@ function App() {
                         handleSetSnackBar={handleSetSnackBar}
                         handleCloseSnackbar={handleCloseSnackbar}/>
                 </Grid.Row>
-                <Grid.Row verticalAlign='middle' columns={2}>
-                    <Grid.Column id="player-total">
+                <Grid.Row verticalAlign='middle' columns={4}>
+                    <Grid.Column className="stats">
                         {blacklistedPlayers.length} players registered
                     </Grid.Column>
                     <Grid.Column>
-                        <CreatePlayer handleNewPlayer={handleNewPlayer}/>
+                        <CreatePlayer handleNewPlayer={handleNewPlayer} reasonsList={reasonsList}/>
+                    </Grid.Column>
+                    <Grid.Column className="stats">
+                        {reasonsList.length} reasons registered
+                    </Grid.Column>
+                    <Grid.Column>
+                        <ReasonForm reasonsList={reasonsList}/>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row centered>

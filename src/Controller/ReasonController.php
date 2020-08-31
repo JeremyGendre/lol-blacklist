@@ -27,19 +27,12 @@ class ReasonController extends AbstractController
      * @param ReasonRepository $reasonRepository
      * @return JsonResponse
      */
-    public function allPlayers(
+    public function allReasons(
         ReasonRepository $reasonRepository
     ): JsonResponse
     {
         $list = $reasonRepository->findAll();
-        $returnedList = [];
-        foreach ($list as $reason){
-            $returnedList[] = [
-                'key' => $reason->getId(),
-                'value' => $reason->getId(),
-                'text' => $reason->getLabel(),
-            ];
-        }
+        $returnedList = ReasonHelper::serializeMultipleReasons($list,'select');
         return $this->formattedJsonResponse($returnedList);
     }
 

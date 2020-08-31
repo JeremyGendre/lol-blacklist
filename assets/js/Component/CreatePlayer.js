@@ -2,20 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {Button, Dropdown, Form, Input, Message, Modal, Popup} from "semantic-ui-react";
 import axios from "axios";
 
-const dummyReasons = [
-    { key:0, value:0, text: 'Other'},
-    { key:1, value:1, text: 'Int'},
-    { key:2, value:2, text: 'Toxic'},
-    { key:3, value:3, text: 'Afk'},
-];
-
 export default function CreatePlayer(props) {
     const [isModalOpen,setIsModalOpen] = useState(false);
     const [newPlayerName,setNewPlayerName] = useState('');
     const [newPlayerReasons,setNewPlayerReasons] = useState([]);
     const [newPlayerFormError,setNewPlayerFormError] = useState('');
     const [newPlayerFormSubmitting,setNewPlayerFormSubmitting] = useState(false);
-    const [reasonsList,setReasonsList] = useState(dummyReasons);
 
     function clearModal(){
         setIsModalOpen(false);
@@ -57,14 +49,6 @@ export default function CreatePlayer(props) {
             && newPlayerReasons !== undefined && newPlayerReasons.length > 0)
     }
 
-    useEffect(() => {
-        axios.get('/api/reason/all').then(data => {
-            if(data.data.success === true){
-                setReasonsList(data.data.content);
-            }
-        });
-    },[]);
-
     return (
         <div>
             <Popup
@@ -101,7 +85,7 @@ export default function CreatePlayer(props) {
                                         className="full-width"
                                         placeholder='Select one or many reasons'
                                         onChange={(e, {value})=>setNewPlayerReasons(value)}
-                                        multiple selection search required options={reasonsList} />
+                                        multiple selection search required options={props.reasonsList} />
                                 </Form.Field>
                             </Form.Group>
                         </Form>

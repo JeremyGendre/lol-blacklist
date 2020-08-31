@@ -16,7 +16,7 @@ body {
     border-bottom:solid 1px lightgrey;
 }
 
-#player-total{
+.stats{
     display: table-cell;
     vertical-align: middle;
     text-align: right;

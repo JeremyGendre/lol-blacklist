@@ -52,4 +52,27 @@ class ReasonHelper
         $reason = $this->reasonRepository->findOneBy(['label'=> $label]);
         return $reason === null;
     }
+
+    /**
+     * @param Reason[] $reasonsList
+     * @param string $type
+     * @return array
+     */
+    public static function serializeMultipleReasons(
+        $reasonsList,
+        $type = 'default'
+    ):array {
+        $returnedValue = [];
+        foreach ($reasonsList as $reason){
+            switch($type){
+                case 'select':
+                    $returnedValue[] = $reason->serializeForSelect();
+                    break;
+                default:
+                    $returnedValue[] = $reason->serialize();
+                    break;
+            }
+        }
+        return $returnedValue;
+    }
 }

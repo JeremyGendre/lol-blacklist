@@ -123,6 +123,18 @@ class Reason implements MySerializerInterface
     /**
      * @return array
      */
+    public function serializeForSelect():array
+    {
+        return [
+            'key' => $this->id,
+            'value' => $this->id,
+            'text' => $this->label
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public function serialisedAssociatedPlayers(): array
     {
         $result = [];

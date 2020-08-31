@@ -10,18 +10,11 @@ import MuiAlert from '@material-ui/lab/Alert';
 import SubmitButton from "./Component/SubmitButton";
 import BlacklistedPlayersFound from "./Component/BlacklistedPlayersFound";
 import CreatePlayer from "./Component/CreatePlayer";
-import ReasonForm from "./Component/ReasonForm";
 
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
-
-const largeSearch = 'pseudo 1 joined the lobby\n' +
-    'pseudo 2 joined the lobby\n' +
-    'pseudo 3 joined the lobby\n' +
-    'pseudo 4 joined the lobby\n' +
-    'pseudo 5 joined the lobby';
 
 function App() {
     /** Snackbar **/
@@ -195,18 +188,12 @@ function App() {
                         handleSetSnackBar={handleSetSnackBar}
                         handleCloseSnackbar={handleCloseSnackbar}/>
                 </Grid.Row>
-                <Grid.Row verticalAlign='middle' columns={4}>
+                <Grid.Row verticalAlign='middle' columns={2}>
                     <Grid.Column className="stats">
                         {blacklistedPlayers.length} players registered
                     </Grid.Column>
                     <Grid.Column>
                         <CreatePlayer handleNewPlayer={handleNewPlayer} reasonsList={reasonsList}/>
-                    </Grid.Column>
-                    <Grid.Column className="stats">
-                        {reasonsList.length} reasons registered
-                    </Grid.Column>
-                    <Grid.Column>
-                        <ReasonForm reasonsList={reasonsList}/>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row centered>
